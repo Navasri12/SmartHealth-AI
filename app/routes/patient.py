@@ -222,11 +222,14 @@ def download_pdf(prediction_id):
     disease_info = Disease.query.filter_by(name=pred.predicted_disease).first()
     prof = PatientProfile.query.filter_by(user_id=current_user.id).first()
 
-    # Generate PDF in reports directory
-    reports_dir = os.path.join(current_app.root_path, '..', 'instance', 'reports')
-    os.makedirs(reports_dir, exist_ok=True)
+    reports_dir = current_app.config['REPORTS_DIR']
+    try:
+        os.makedirs(reports_dir, exist_ok=True)
+    except Exception:
+        pass
     pdf_filename = f"SmartHealth_Assessment_{pred.id}_{datetime.now().strftime('%Y%m%d')}.pdf"
     pdf_path = os.path.join(reports_dir, pdf_filename)
+
 
     generate_prediction_pdf(pred, current_user, prof, disease_info, pdf_path)
     return send_file(pdf_path, as_attachment=True, download_name=pdf_filename)

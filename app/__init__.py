@@ -11,7 +11,11 @@ def create_app(config_class=Config):
     app = Flask(__name__, template_folder='../templates', static_folder='../static')
     app.config.from_object(config_class)
 
-    os.makedirs(os.path.join(app.root_path, '..', 'instance'), exist_ok=True)
+    try:
+        os.makedirs(os.path.dirname(app.config['DB_PATH']), exist_ok=True)
+    except Exception as e:
+        print(f"[WARN] Directory creation notice: {e}")
+
 
     db.init_app(app)
     login_manager.init_app(app)
