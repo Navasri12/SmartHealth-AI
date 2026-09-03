@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Diseases Knowledge Base — Admin SmartHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="fa-solid fa-book-medical text-primary me-2"></i> Diseases Knowledge Base</h2>
+            <p class="text-secondary mb-0 fs-7">Manage educational descriptions, prevention guides, and lifestyle recommendations.</p>
+        </div>
+        <div class="mt-2 mt-md-0">
+            <button type="button" class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addDiseaseModal">
+                <i class="fa-solid fa-plus me-1"></i> Add Disease Entry
+            </button>
+        </div>
+    </div>
+
+    <div class="card-modern p-4">
+        <div class="table-responsive">
+            <table class="table table-custom align-middle">
+                <thead>
+                    <tr>
+                        <th>Disease Name</th>
+                        <th>Category</th>
+                        <th>Educational Overview</th>
+                        <th>Common Symptoms</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for disease in diseases %}
+                        <tr>
+                            <td class="fw-bold text-primary fs-6">{{ disease.name }}</td>
+                            <td><span class="badge bg-light text-dark border">{{ disease.category }}</span></td>
+                            <td class="fs-7 text-secondary text-truncate" style="max-width: 250px;">{{ disease.description }}</td>
+                            <td class="fs-7 text-muted text-truncate" style="max-width: 200px;">{{ disease.common_symptoms or 'N/A' }}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="viewDiseaseDetails('{{ disease.name }}', `{{ disease.description }}`, `{{ disease.prevention }}`, `{{ disease.recommendations }}`)">
+                                    <i class="fa-regular fa-eye me-1"></i> View Info
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Disease Modal -->
+<div class="modal fade" id="addDiseaseModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold"><i class="fa-solid fa-plus-circle text-primary me-2"></i> Add / Edit Disease Entry</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('admin.diseases') }}">
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label fs-7 fw-semibold">Disease Name *</label>
+                            <input type="text" name="name" class="form-control" placeholder="e.g. Pneumonia" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fs-7 fw-semibold">Category</label>
+                            <select name="category" class="form-select">
+                                <option value="Respiratory">Respiratory</option>
+                                <option value="Cardiovascular">Cardiovascular</option>
+                                <option value="Digestive">Digestive</option>
+                                <option value="Neurological">Neurological</option>
+                                <option value="Endocrine">Endocrine</option>
+                                <option value="Musculoskeletal">Musculoskeletal</option>
+                                <option value="General">General</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fs-7 fw-semibold">Educational Overview Description *</label>
+                        <textarea name="description" class="form-control" rows="2" placeholder="General description of condition..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fs-7 fw-semibold">Common Symptoms List</label>
+                        <input type="text" name="common_symptoms" class="form-control" placeholder="e.g. Fever, Cough, Shortness of Breath">
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fs-7 fw-semibold">Prevention & Hygiene</label>
+                            <textarea name="prevention" class="form-control" rows="2" placeholder="Prevention guidance..."></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fs-7 fw-semibold">General Lifestyle Recommendations</label>
+                            <textarea name="recommendations" class="form-control" rows="2" placeholder="Rest, hydration, self-care..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary-custom rounded-pill">Save Disease Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function viewDiseaseDetails(name, desc, prev, rec) {
+    alert(`[DISEASE INFO: ${name}]\n\nDescription: ${desc}\n\nPrevention: ${prev || 'N/A'}\n\nRecommendations: ${rec || 'N/A'}`);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Management — Admin SmartHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="fa-solid fa-users text-primary me-2"></i> Patient User Management</h2>
+            <p class="text-secondary mb-0 fs-7">View registered patient accounts, monitor status, and manage access permissions.</p>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="card-modern p-3 mb-4">
+        <form method="GET" action="{{ url_for('admin.users') }}" class="row g-2">
+            <div class="col-md-9">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                    <input type="text" name="search" class="form-control" placeholder="Search patient by name or email..." value="{{ search }}">
+                </div>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-filter me-1"></i> Search</button>
+                {% if search %}
+                    <a href="{{ url_for('admin.users') }}" class="btn btn-outline-secondary"><i class="fa-solid fa-xmark"></i></a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <div class="card-modern p-4">
+        <div class="table-responsive">
+            <table class="table table-custom align-middle">
+                <thead>
+                    <tr>
+                        <th>Patient ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Registered Date</th>
+                        <th>Account Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for patient in patients %}
+                        <tr>
+                            <td class="fw-bold text-secondary">PT-{{ "%04d"|format(patient.id) }}</td>
+                            <td class="fw-bold text-dark">{{ patient.name }}</td>
+                            <td class="fs-7 text-secondary">{{ patient.email }}</td>
+                            <td class="fs-7 text-muted">{{ patient.phone or 'N/A' }}</td>
+                            <td class="fs-7 text-muted">{{ patient.created_at.strftime('%d %b %Y') }}</td>
+                            <td>
+                                {% if patient.is_active %}
+                                    <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1">Active</span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-1">Deactivated</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form method="POST" action="{{ url_for('admin.toggle_user_status', user_id=patient.id) }}">
+                                    {% if patient.is_active %}
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                                            <i class="fa-solid fa-user-slash me-1"></i> Deactivate
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                            <i class="fa-solid fa-user-check me-1"></i> Enable
+                                        </button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">No patient records found matching query.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

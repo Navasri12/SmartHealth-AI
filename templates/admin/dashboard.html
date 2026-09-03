@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard — SmartHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
+        <div>
+            <span class="badge bg-dark text-white rounded-pill px-3 py-1 mb-1"><i class="fa-solid fa-user-shield me-1"></i> Administrator Control Center</span>
+            <h2 class="fw-bold mb-0">System Analytics & Platform Overview</h2>
+        </div>
+        <div class="mt-2 mt-md-0">
+            <a href="{{ url_for('admin.ml_analytics') }}" class="btn btn-outline-dark rounded-pill">
+                <i class="fa-solid fa-brain me-1"></i> ML Model Performance
+            </a>
+        </div>
+    </div>
+
+    <!-- Admin Stat Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <a href="{{ url_for('admin.users') }}" class="text-decoration-none">
+                <div class="card-modern p-3 border-start border-4 border-primary hover-lift cursor-pointer">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary fs-7 fw-semibold">Registered Patients</span>
+                        <i class="fa-solid fa-users text-primary fs-4"></i>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-baseline">
+                        <h3 class="fw-bold mb-0 text-dark">{{ total_patients }}</h3>
+                        <span class="fs-8 text-primary fw-semibold">Manage Patients <i class="fa-solid fa-arrow-right ms-1"></i></span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card-modern p-3 border-start border-4 border-success">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-secondary fs-7 fw-semibold">Total Predictions</span>
+                    <i class="fa-solid fa-microscope text-success fs-4"></i>
+                </div>
+                <h3 class="fw-bold mb-0 text-dark">{{ total_predictions }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <a href="{{ url_for('admin.symptoms') }}" class="text-decoration-none">
+                <div class="card-modern p-3 border-start border-4 border-info hover-lift cursor-pointer">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary fs-7 fw-semibold">Active Symptoms</span>
+                        <i class="fa-solid fa-list text-info fs-4"></i>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-baseline">
+                        <h3 class="fw-bold mb-0 text-dark">{{ total_symptoms }}</h3>
+                        <span class="fs-8 text-info fw-semibold">View Catalog <i class="fa-solid fa-arrow-right ms-1"></i></span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <a href="{{ url_for('admin.diseases') }}" class="text-decoration-none">
+                <div class="card-modern p-3 border-start border-4 border-warning hover-lift cursor-pointer">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary fs-7 fw-semibold">Diseases Knowledge Base</span>
+                        <i class="fa-solid fa-book-medical text-warning fs-4"></i>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-baseline">
+                        <h3 class="fw-bold mb-0 text-dark">{{ total_diseases }}</h3>
+                        <span class="fs-8 text-warning fw-semibold">Manage Diseases <i class="fa-solid fa-arrow-right ms-1"></i></span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Charts & Activity Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="card-modern p-4 h-100">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-pie text-primary me-2"></i> Predicted Disease Distribution</h5>
+                <div style="position: relative; height: 260px;">
+                    <canvas id="adminDiseaseChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card-modern p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-clock-rotate-left text-success me-2"></i> Recent Activity</h5>
+                    <a href="{{ url_for('admin.users') }}" class="btn btn-sm btn-outline-primary rounded-pill">
+                        <i class="fa-solid fa-users me-1"></i> View All Registered Patients
+                    </a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle fs-7">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Condition Predicted</th>
+                                <th>Confidence</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pred in recent_predictions %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('admin.users', search=pred.user.name) }}" class="fw-semibold text-primary text-decoration-none" title="View Patient Details">
+                                            <i class="fa-solid fa-user me-1 text-secondary"></i> {{ pred.user.name }}
+                                        </a>
+                                    </td>
+                                    <td class="text-dark fw-bold">{{ pred.predicted_disease }}</td>
+                                    <td><span class="badge bg-primary rounded-pill">{{ pred.probability }}%</span></td>
+                                    <td class="text-muted">{{ pred.created_at.strftime('%b %d, %H:%M') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const disLabels = {{ disease_labels|tojson }};
+    const disData = {{ disease_data|tojson }};
+
+    if (disLabels.length > 0) {
+        const ctx = document.getElementById('adminDiseaseChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: disLabels,
+                datasets: [{
+                    data: disData,
+                    backgroundColor: ['#0d6efd', '#0ea5e9', '#10b981', '#f59e0b', '#8b5cf6']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'right' } }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

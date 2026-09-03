@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Internal Server Error — SmartHealth AI{% endblock %}
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="card-modern p-5 max-w-lg mx-auto">
+        <h1 class="display-1 fw-bold text-warning">500</h1>
+        <h3 class="fw-bold mb-3">Internal Server Error</h3>
+        <p class="text-secondary mb-4">An unexpected system error occurred. Our technical logs have recorded this incident.</p>
+        <a href="{{ url_for('main.index') }}" class="btn btn-primary-custom rounded-pill px-4">Return to Home</a>
+    </div>
+</div>
+{% endblock %}

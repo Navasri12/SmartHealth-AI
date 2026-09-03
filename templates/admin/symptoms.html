@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Symptom Catalog — Admin SmartHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="fa-solid fa-list-check text-primary me-2"></i> Symptom Catalog Management</h2>
+            <p class="text-secondary mb-0 fs-7">Manage symptoms used by the ML disease prediction engine.</p>
+        </div>
+        <div class="mt-2 mt-md-0">
+            <button type="button" class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addSymptomModal">
+                <i class="fa-solid fa-plus me-1"></i> Add New Symptom
+            </button>
+        </div>
+    </div>
+
+    <div class="card-modern p-4">
+        <div class="table-responsive">
+            <table class="table table-custom align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Symptom Name</th>
+                        <th>Code Identifier</th>
+                        <th>Category</th>
+                        <th>Emergency Flag</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sym in symptoms %}
+                        <tr>
+                            <td class="fw-bold text-muted">#{{ sym.id }}</td>
+                            <td class="fw-bold text-dark">{{ sym.name }}</td>
+                            <td><code class="text-primary">{{ sym.code_name }}</code></td>
+                            <td><span class="badge bg-light text-dark border">{{ sym.category }}</span></td>
+                            <td>
+                                {% if sym.is_emergency %}
+                                    <span class="badge bg-danger text-white rounded-pill px-2">Yes (Red Flag)</span>
+                                {% else %}
+                                    <span class="badge bg-secondary text-white rounded-pill px-2">Standard</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Active</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Symptom Modal -->
+<div class="modal fade" id="addSymptomModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold"><i class="fa-solid fa-plus-circle text-primary me-2"></i> Add New Symptom</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('admin.symptoms') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fs-7 fw-semibold">Symptom Display Name *</label>
+                        <input type="text" name="name" class="form-control" placeholder="e.g. Chest Tightness" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fs-7 fw-semibold">Code Identifier (Snake Case) *</label>
+                        <input type="text" name="code_name" class="form-control" placeholder="e.g. chest_tightness" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fs-7 fw-semibold">Category</label>
+                        <select name="category" class="form-select">
+                            <option value="General">General</option>
+                            <option value="Respiratory">Respiratory</option>
+                            <option value="Cardiovascular">Cardiovascular</option>
+                            <option value="Digestive">Digestive</option>
+                            <option value="Neurological">Neurological</option>
+                            <option value="Skin">Skin</option>
+                            <option value="Musculoskeletal">Musculoskeletal</option>
+                            <option value="Mental">Mental/Well-being</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fs-7 fw-semibold">Description</label>
+                        <textarea name="description" class="form-control" rows="2" placeholder="Brief clinical description..."></textarea>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input type="checkbox" name="is_emergency" class="form-check-input" id="emergCheck">
+                        <label class="form-check-label fs-7 fw-semibold text-danger" for="emergCheck">
+                            Mark as Red-Flag Emergency Symptom
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary-custom rounded-pill">Save Symptom</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

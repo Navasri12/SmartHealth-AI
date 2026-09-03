@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Symptom Selection — SmartHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="fa-solid fa-microscope text-primary me-2"></i> Symptom Analysis Interface</h2>
+            <p class="text-secondary mb-0 fs-7">Select symptoms, specify severity levels, and submit for AI disease risk assessment.</p>
+        </div>
+        <div class="mt-2 mt-md-0">
+            <span class="badge bg-primary fs-6 rounded-pill px-3 py-2">
+                Selected: <span id="selectedSymptomCountBadge">0</span> Symptoms
+            </span>
+        </div>
+    </div>
+
+    <!-- Search & Category Filters -->
+    <div class="card-modern p-3 mb-4">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                    <input type="text" id="symptomSearchInput" class="form-control" placeholder="Search symptoms (e.g. fever, cough, chest pain, rash)...">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex flex-wrap gap-1">
+                    <button type="button" class="btn btn-sm btn-primary active category-filter-btn rounded-pill" data-category="all">All</button>
+                    {% for category in categorized_symptoms.keys() %}
+                        <button type="button" class="btn btn-sm btn-outline-secondary category-filter-btn rounded-pill" data-category="{{ category }}">{{ category }}</button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST" action="{{ url_for('patient.symptoms') }}">
+        <div class="row g-3 mb-4" id="symptomGrid">
+            {% for category, symptoms_list in categorized_symptoms.items() %}
+                {% for sym in symptoms_list %}
+                    <div class="col-md-6 col-lg-4 symptom-item-col" 
+                         data-symptom-name="{{ sym.name }}" 
+                         data-symptom-code="{{ sym.code_name }}" 
+                         data-symptom-category="{{ sym.category }}">
+                        <div class="symptom-card h-100">
+                            <div class="d-flex align-items-start gap-2 mb-2">
+                                <input type="checkbox" name="symptoms" value="{{ sym.code_name }}" class="form-check-input symptom-checkbox mt-1" id="sym_{{ sym.code_name }}">
+                                <label for="sym_{{ sym.code_name }}" class="w-100 cursor-pointer mb-0">
+                                    <div class="fw-bold d-flex justify-content-between align-items-center">
+                                        <span>{{ sym.name }}</span>
+                                        {% if sym.is_emergency %}
+                                            <span class="badge bg-danger-subtle text-danger fs-8 rounded-pill">Urgent</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="fs-8 text-secondary mt-1">{{ sym.description or 'Category: ' ~ sym.category }}</div>
+                                </label>
+                            </div>
+
+                            <!-- Severity & Duration Controls (Hidden until checked) -->
+                            <div class="symptom-details-controls d-none mt-2 pt-2 border-top">
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <label class="fs-8 fw-semibold text-muted mb-1">Severity</label>
+                                        <select name="severity_{{ sym.code_name }}" class="form-select form-select-sm severity-select">
+                                            <option value="Mild">Mild</option>
+                                            <option value="Moderate" selected>Moderate</option>
+                                            <option value="Severe">Severe</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="fs-8 fw-semibold text-muted mb-1">Duration</label>
+                                        <select name="duration_{{ sym.code_name }}" class="form-select form-select-sm duration-select">
+                                            <option value="< 1 day">&lt; 1 day</option>
+                                            <option value="1-3 days" selected>1–3 days</option>
+                                            <option value="4-7 days">4–7 days</option>
+                                            <option value="> 1 week">&gt; 1 week</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <!-- Floating Submit Bar -->
+        <div class="card-modern p-3 sticky-bottom bg-white shadow-lg border-top">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="fs-7 text-secondary">
+                    <i class="fa-solid fa-circle-info text-primary me-1"></i> Check all applicable symptoms then click analyze.
+                </div>
+                <button type="submit" class="btn btn-primary-custom btn-lg rounded-pill px-5">
+                    <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Run AI Disease Prediction
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

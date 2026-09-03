@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Profile — SmartHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="fa-solid fa-user-gear text-primary me-2"></i> Patient Medical Profile</h2>
+            <p class="text-secondary mb-0 fs-7">View and update your personal demographic and medical record information.</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card-modern p-4 p-md-5">
+                <form method="POST" action="{{ url_for('patient.profile') }}">
+                    <h5 class="fw-bold text-primary mb-3 pb-2 border-bottom"><i class="fa-solid fa-id-card me-2"></i> Personal Demographics</h5>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fs-7 fw-semibold">Full Name</label>
+                            <input type="text" name="name" class="form-control" value="{{ user.name }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fs-7 fw-semibold">Email Address (Read-only)</label>
+                            <input type="email" class="form-control bg-light" value="{{ user.email }}" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fs-7 fw-semibold">Phone Number</label>
+                            <input type="tel" name="phone" class="form-control" value="{{ user.phone or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fs-7 fw-semibold">Date of Birth</label>
+                            <input type="date" name="date_of_birth" class="form-control" value="{{ user.date_of_birth or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fs-7 fw-semibold">Gender</label>
+                            <select name="gender" class="form-select">
+                                <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if user.gender == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold text-primary mb-3 pb-2 border-bottom"><i class="fa-solid fa-notes-medical me-2"></i> Physical & Medical Metrics</h5>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label fs-7 fw-semibold">Height (cm)</label>
+                            <input type="number" step="0.1" name="height" class="form-control" value="{{ profile.height if profile and profile.height else '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fs-7 fw-semibold">Weight (kg)</label>
+                            <input type="number" step="0.1" name="weight" class="form-control" value="{{ profile.weight if profile and profile.weight else '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fs-7 fw-semibold">Blood Group</label>
+                            <select name="blood_group" class="form-select">
+                                <option value="">Select Blood Group</option>
+                                {% for bg in ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'] %}
+                                    <option value="{{ bg }}" {% if profile and profile.blood_group == bg %}selected{% endif %}>{{ bg }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fs-7 fw-semibold">Known Allergies</label>
+                            <textarea name="allergies" class="form-control" rows="2" placeholder="e.g. Penicillin, Peanuts, Latex">{{ profile.allergies if profile and profile.allergies else '' }}</textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fs-7 fw-semibold">Pre-existing Health Conditions</label>
+                            <textarea name="existing_conditions" class="form-control" rows="2" placeholder="e.g. Asthma, Type 2 Diabetes, Hypertension">{{ profile.existing_conditions if profile and profile.existing_conditions else '' }}</textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-custom px-4 py-2">
+                        <i class="fa-solid fa-floppy-disk me-2"></i> Save Profile Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

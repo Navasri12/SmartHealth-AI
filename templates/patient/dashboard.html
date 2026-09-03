@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Dashboard — SmartHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom">
+        <div>
+            <h2 class="fw-bold mb-1">Welcome back, {{ current_user.name }} 👋</h2>
+            <p class="text-secondary mb-0 fs-7">Patient Health Assessment Overview & Quick Actions</p>
+        </div>
+        <div class="mt-3 mt-md-0">
+            <a href="{{ url_for('patient.symptoms') }}" class="btn btn-primary-custom">
+                <i class="fa-solid fa-stethoscope me-2"></i> Analyze Symptoms Now
+            </a>
+        </div>
+    </div>
+
+    <!-- Dashboard Stat Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="card-modern p-3 border-start border-4 border-primary">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-secondary fs-7 fw-semibold">Total Assessments</span>
+                    <i class="fa-solid fa-clipboard-check text-primary fs-4"></i>
+                </div>
+                <h3 class="fw-bold mb-0">{{ total_predictions }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card-modern p-3 border-start border-4 border-info">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-secondary fs-7 fw-semibold">Latest Condition</span>
+                    <i class="fa-solid fa-notes-medical text-info fs-4"></i>
+                </div>
+                <h5 class="fw-bold mb-0 text-truncate">
+                    {% if latest_prediction %}{{ latest_prediction.predicted_disease }}{% else %}No assessments{% endif %}
+                </h5>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card-modern p-3 border-start border-4 border-warning">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-secondary fs-7 fw-semibold">Health Risk Indicator</span>
+                    <i class="fa-solid fa-heart-pulse text-warning fs-4"></i>
+                </div>
+                <h5 class="fw-bold mb-0 text-warning">{{ risk_level }}</h5>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card-modern p-3 border-start border-4 border-success">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-secondary fs-7 fw-semibold">Last Assessment Date</span>
+                    <i class="fa-solid fa-calendar-check text-success fs-4"></i>
+                </div>
+                <h6 class="fw-bold mb-0">
+                    {% if latest_prediction %}{{ latest_prediction.created_at.strftime('%b %d, %Y') }}{% else %}N/A{% endif %}
+                </h6>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Banner -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <a href="{{ url_for('patient.symptoms') }}" class="text-decoration-none">
+                <div class="card-modern p-3 text-center bg-primary text-white hover-lift">
+                    <i class="fa-solid fa-microscope fs-2 mb-2"></i>
+                    <h6 class="fw-bold mb-0">Analyze Symptoms</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('patient.history') }}" class="text-decoration-none">
+                <div class="card-modern p-3 text-center bg-white text-dark hover-lift">
+                    <i class="fa-solid fa-clock-rotate-left fs-2 text-info mb-2"></i>
+                    <h6 class="fw-bold mb-0">View History</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('patient.analytics') }}" class="text-decoration-none">
+                <div class="card-modern p-3 text-center bg-white text-dark hover-lift">
+                    <i class="fa-solid fa-chart-pie fs-2 text-success mb-2"></i>
+                    <h6 class="fw-bold mb-0">Health Analytics</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('patient.profile') }}" class="text-decoration-none">
+                <div class="card-modern p-3 text-center bg-white text-dark hover-lift">
+                    <i class="fa-solid fa-user-gear fs-2 text-warning mb-2"></i>
+                    <h6 class="fw-bold mb-0">Medical Profile</h6>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Predictions Log -->
+    <div class="card-modern p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0"><i class="fa-solid fa-list-check me-2 text-primary"></i> Recent Predictions</h5>
+            <a href="{{ url_for('patient.history') }}" class="btn btn-sm btn-outline-primary rounded-pill">View All</a>
+        </div>
+
+        {% if recent_predictions %}
+            <div class="table-responsive">
+                <table class="table table-custom align-middle">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Symptoms Analyzed</th>
+                            <th>Possible Condition</th>
+                            <th>Model Confidence</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pred in recent_predictions %}
+                            <tr>
+                                <td class="fs-7 text-secondary">{{ pred.created_at.strftime('%d %b %Y, %H:%M') }}</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        {{ pred.selected_symptoms|length }} Symptoms
+                                    </span>
+                                </td>
+                                <td class="fw-bold text-primary">{{ pred.predicted_disease }}</td>
+                                <td>
+                                    <span class="badge {% if pred.probability >= 85 %}bg-success{% elif pred.probability >= 70 %}bg-primary{% else %}bg-secondary{% endif %} rounded-pill">
+                                        {{ pred.probability }}%
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('patient.view_prediction', prediction_id=pred.id) }}" class="btn btn-sm btn-light border rounded-pill">
+                                        <i class="fa-regular fa-eye me-1"></i> View Details
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-4 text-muted">
+                <i class="fa-solid fa-notes-medical fs-1 mb-2 text-secondary"></i>
+                <p class="mb-2">No health assessments performed yet.</p>
+                <a href="{{ url_for('patient.symptoms') }}" class="btn btn-sm btn-primary-custom">Start First Symptom Analysis</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

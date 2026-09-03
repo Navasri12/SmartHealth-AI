@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}ML Model Performance — Admin SmartHealth AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
+        <div>
+            <span class="badge bg-primary text-white rounded-pill px-3 py-1 mb-1">Model Version: SmartHealth-AI-v1.0</span>
+            <h2 class="fw-bold mb-0"><i class="fa-solid fa-brain text-primary me-2"></i> Machine Learning Model Performance Analytics</h2>
+        </div>
+    </div>
+
+    <!-- Model Comparison Table -->
+    <div class="card-modern p-4 mb-4">
+        <h5 class="fw-bold mb-3"><i class="fa-solid fa-table-cells text-success me-2"></i> Evaluated Classifier Comparison Table</h5>
+        <p class="text-secondary fs-7 mb-4">
+            5 machine learning algorithms were trained on the multi-symptom dataset (`dataset/disease_symptom_dataset.csv`) using an 80/20 train-test split. Metrics below reflect actual evaluated test performance.
+        </p>
+
+        <div class="table-responsive">
+            <table class="table table-custom align-middle">
+                <thead>
+                    <tr>
+                        <th>Algorithm Name</th>
+                        <th>Accuracy</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1 Score</th>
+                        <th>Selection Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in metrics %}
+                        <tr {% if m.is_best %}class="table-primary-subtle"{% endif %}>
+                            <td class="fw-bold text-dark fs-6">{{ m.model_name }}</td>
+                            <td><span class="fw-bold text-primary">{{ m.accuracy }}%</span></td>
+                            <td>{{ m.precision }}%</td>
+                            <td>{{ m.recall }}%</td>
+                            <td class="fw-bold text-dark">{{ m.f1_score }}%</td>
+                            <td>
+                                {% if m.is_best %}
+                                    <span class="badge bg-success rounded-pill px-3 py-1">
+                                        <i class="fa-solid fa-trophy me-1"></i> Best Selected Model
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-light text-secondary border rounded-pill px-3 py-1">Evaluated</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Artifacts Metadata Summary -->
+    {% if artifact_data %}
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card-modern p-4 h-100">
+                    <h5 class="fw-bold mb-3"><i class="fa-solid fa-gears text-info me-2"></i> Feature Vector Details</h5>
+                    <p class="fs-7 text-secondary">Total Binary Symptom Features: <strong>{{ artifact_data.symptoms_list|length }}</strong></p>
+                    <div class="d-flex flex-wrap gap-1 max-h-48 overflow-y-auto p-2 bg-light rounded-3 border">
+                        {% for sym in artifact_data.symptoms_list %}
+                            <span class="badge bg-white text-dark border fs-8">{{ sym }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card-modern p-4 h-100">
+                    <h5 class="fw-bold mb-3"><i class="fa-solid fa-disease text-warning me-2"></i> Disease Target Classes</h5>
+                    <p class="fs-7 text-secondary">Total Disease Classes Trained: <strong>{{ artifact_data.diseases_list|length }}</strong></p>
+                    <div class="d-flex flex-wrap gap-1 max-h-48 overflow-y-auto p-2 bg-light rounded-3 border">
+                        {% for dis in artifact_data.diseases_list %}
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-8">{{ dis }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Retrain Action Box -->
+    <div class="card-modern p-4 bg-light border-dashed">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+            <div>
+                <h6 class="fw-bold text-dark mb-1"><i class="fa-solid fa-rotate me-2 text-primary"></i> Retrain & Re-evaluate ML Models</h6>
+                <p class="text-secondary fs-7 mb-0">To update models after modifying dataset or symptom features, execute <code>python train_model.py</code> in terminal.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
