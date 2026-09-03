@@ -18,7 +18,7 @@
 
     <!-- Search & Category Filters -->
     <div class="card-modern p-3 mb-4">
-        <div class="row g-3 align-items-center">
+        <div class="row g-3 align-items-center mb-2">
             <div class="col-md-6">
                 <div class="input-group">
                     <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
@@ -34,7 +34,25 @@
                 </div>
             </div>
         </div>
+
+        <!-- Quick Preset Symptom Bundles -->
+        <div class="pt-2 border-top d-flex flex-wrap align-items-center gap-2">
+            <span class="fs-8 fw-bold text-muted text-uppercase me-1"><i class="fa-solid fa-bolt text-warning me-1"></i> Quick Presets:</span>
+            <button type="button" class="btn btn-xs btn-outline-primary rounded-pill px-3 py-1 fs-8 preset-btn" data-symptoms="fever,cough,fatigue,sore_throat">
+                <i class="fa-solid fa-head-side-cough me-1"></i> Cold / Flu Bundle
+            </button>
+            <button type="button" class="btn btn-xs btn-outline-success rounded-pill px-3 py-1 fs-8 preset-btn" data-symptoms="abdominal_pain,nausea,vomiting,diarrhea">
+                <i class="fa-solid fa-bacteria me-1"></i> Digestive Bundle
+            </button>
+            <button type="button" class="btn btn-xs btn-outline-info rounded-pill px-3 py-1 fs-8 preset-btn" data-symptoms="headache,dizziness,sensitivity_to_light,blurred_vision">
+                <i class="fa-solid fa-brain me-1"></i> Headache / Migraine Bundle
+            </button>
+            <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill px-3 py-1 fs-8" id="clearAllSymptomsBtn">
+                <i class="fa-solid fa-rotate-left me-1"></i> Clear All
+            </button>
+        </div>
     </div>
+
 
     <form method="POST" action="{{ url_for('patient.symptoms') }}">
         <div class="row g-3 mb-4" id="symptomGrid">

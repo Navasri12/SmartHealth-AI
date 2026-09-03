@@ -20,49 +20,74 @@
     <!-- Dashboard Stat Cards -->
     <div class="row g-4 mb-4">
         <div class="col-md-3 col-sm-6">
-            <div class="card-modern p-3 border-start border-4 border-primary">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-secondary fs-7 fw-semibold">Total Assessments</span>
-                    <i class="fa-solid fa-clipboard-check text-primary fs-4"></i>
+            <a href="{{ url_for('patient.history') }}" class="text-decoration-none">
+                <div class="card-modern p-3 border-start border-4 border-primary hover-lift cursor-pointer">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary fs-7 fw-semibold">Total Assessments</span>
+                        <i class="fa-solid fa-clipboard-check text-primary fs-4"></i>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-baseline">
+                        <h3 class="fw-bold mb-0 text-dark">{{ total_predictions }}</h3>
+                        <span class="fs-8 text-primary fw-semibold">View History <i class="fa-solid fa-arrow-right ms-1"></i></span>
+                    </div>
                 </div>
-                <h3 class="fw-bold mb-0">{{ total_predictions }}</h3>
-            </div>
+            </a>
         </div>
 
         <div class="col-md-3 col-sm-6">
-            <div class="card-modern p-3 border-start border-4 border-info">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-secondary fs-7 fw-semibold">Latest Condition</span>
-                    <i class="fa-solid fa-notes-medical text-info fs-4"></i>
+            {% if latest_prediction %}
+                <a href="{{ url_for('patient.view_prediction', prediction_id=latest_prediction.id) }}" class="text-decoration-none">
+            {% else %}
+                <a href="{{ url_for('patient.symptoms') }}" class="text-decoration-none">
+            {% endif %}
+                <div class="card-modern p-3 border-start border-4 border-info hover-lift cursor-pointer">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary fs-7 fw-semibold">Latest Condition</span>
+                        <i class="fa-solid fa-notes-medical text-info fs-4"></i>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-baseline">
+                        <h5 class="fw-bold mb-0 text-dark text-truncate" style="max-width: 140px;">
+                            {% if latest_prediction %}{{ latest_prediction.predicted_disease }}{% else %}No assessments{% endif %}
+                        </h5>
+                        <span class="fs-8 text-info fw-semibold">Details <i class="fa-solid fa-arrow-right ms-1"></i></span>
+                    </div>
                 </div>
-                <h5 class="fw-bold mb-0 text-truncate">
-                    {% if latest_prediction %}{{ latest_prediction.predicted_disease }}{% else %}No assessments{% endif %}
-                </h5>
-            </div>
+            </a>
         </div>
 
         <div class="col-md-3 col-sm-6">
-            <div class="card-modern p-3 border-start border-4 border-warning">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-secondary fs-7 fw-semibold">Health Risk Indicator</span>
-                    <i class="fa-solid fa-heart-pulse text-warning fs-4"></i>
+            <a href="{{ url_for('patient.analytics') }}" class="text-decoration-none">
+                <div class="card-modern p-3 border-start border-4 border-warning hover-lift cursor-pointer">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary fs-7 fw-semibold">Health Risk Indicator</span>
+                        <i class="fa-solid fa-heart-pulse text-warning fs-4"></i>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-baseline">
+                        <h5 class="fw-bold mb-0 text-warning">{{ risk_level }}</h5>
+                        <span class="fs-8 text-warning fw-semibold">Insights <i class="fa-solid fa-arrow-right ms-1"></i></span>
+                    </div>
                 </div>
-                <h5 class="fw-bold mb-0 text-warning">{{ risk_level }}</h5>
-            </div>
+            </a>
         </div>
 
         <div class="col-md-3 col-sm-6">
-            <div class="card-modern p-3 border-start border-4 border-success">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-secondary fs-7 fw-semibold">Last Assessment Date</span>
-                    <i class="fa-solid fa-calendar-check text-success fs-4"></i>
+            <a href="{{ url_for('patient.history') }}" class="text-decoration-none">
+                <div class="card-modern p-3 border-start border-4 border-success hover-lift cursor-pointer">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary fs-7 fw-semibold">Last Assessment Date</span>
+                        <i class="fa-solid fa-calendar-check text-success fs-4"></i>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-baseline">
+                        <h6 class="fw-bold mb-0 text-dark">
+                            {% if latest_prediction %}{{ latest_prediction.created_at.strftime('%b %d, %Y') }}{% else %}N/A{% endif %}
+                        </h6>
+                        <span class="fs-8 text-success fw-semibold">History <i class="fa-solid fa-arrow-right ms-1"></i></span>
+                    </div>
                 </div>
-                <h6 class="fw-bold mb-0">
-                    {% if latest_prediction %}{{ latest_prediction.created_at.strftime('%b %d, %Y') }}{% else %}N/A{% endif %}
-                </h6>
-            </div>
+            </a>
         </div>
     </div>
+
 
     <!-- Quick Actions Banner -->
     <div class="row g-4 mb-4">

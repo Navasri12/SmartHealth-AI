@@ -74,7 +74,33 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // 4. Auto dismiss flash alerts after 6 seconds
+    // 4. Quick Preset Symptom Bundles
+    const presetBtns = document.querySelectorAll('.preset-btn');
+    presetBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const symCodes = this.getAttribute('data-symptoms').split(',');
+            symCodes.forEach(code => {
+                const cb = document.getElementById('sym_' + code.trim());
+                if (cb) {
+                    cb.checked = true;
+                    cb.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+    });
+
+    const clearAllBtn = document.getElementById('clearAllSymptomsBtn');
+    if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', function () {
+            const checkboxes = document.querySelectorAll('.symptom-checkbox');
+            checkboxes.forEach(cb => {
+                cb.checked = false;
+                cb.dispatchEvent(new Event('change'));
+            });
+        });
+    }
+
+    // 5. Auto dismiss flash alerts after 6 seconds
     const alerts = document.querySelectorAll('.alert-dismissible');
     alerts.forEach(alert => {
         setTimeout(() => {
@@ -83,3 +109,4 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 6000);
     });
 });
+
