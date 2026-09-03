@@ -18,10 +18,11 @@
     </div>
 
     <!-- Dashboard Stat Cards -->
+
     <div class="row g-4 mb-4">
         <div class="col-md-3 col-sm-6">
             <a href="{{ url_for('patient.history') }}" class="text-decoration-none">
-                <div class="card-modern p-3 border-start border-4 border-primary hover-lift cursor-pointer">
+                <div class="card-modern p-3 border-start border-4 border-primary hover-lift cursor-pointer" onclick="window.location.href='{{ url_for('patient.history') }}'">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="text-secondary fs-7 fw-semibold">Total Assessments</span>
                         <i class="fa-solid fa-clipboard-check text-primary fs-4"></i>
@@ -37,10 +38,11 @@
         <div class="col-md-3 col-sm-6">
             {% if latest_prediction %}
                 <a href="{{ url_for('patient.view_prediction', prediction_id=latest_prediction.id) }}" class="text-decoration-none">
+                    <div class="card-modern p-3 border-start border-4 border-info hover-lift cursor-pointer" onclick="window.location.href='{{ url_for('patient.view_prediction', prediction_id=latest_prediction.id) }}'">
             {% else %}
                 <a href="{{ url_for('patient.symptoms') }}" class="text-decoration-none">
+                    <div class="card-modern p-3 border-start border-4 border-info hover-lift cursor-pointer" onclick="window.location.href='{{ url_for('patient.symptoms') }}'">
             {% endif %}
-                <div class="card-modern p-3 border-start border-4 border-info hover-lift cursor-pointer">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="text-secondary fs-7 fw-semibold">Latest Condition</span>
                         <i class="fa-solid fa-notes-medical text-info fs-4"></i>
@@ -57,7 +59,7 @@
 
         <div class="col-md-3 col-sm-6">
             <a href="{{ url_for('patient.analytics') }}" class="text-decoration-none">
-                <div class="card-modern p-3 border-start border-4 border-warning hover-lift cursor-pointer">
+                <div class="card-modern p-3 border-start border-4 border-warning hover-lift cursor-pointer" onclick="window.location.href='{{ url_for('patient.analytics') }}'">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="text-secondary fs-7 fw-semibold">Health Risk Indicator</span>
                         <i class="fa-solid fa-heart-pulse text-warning fs-4"></i>
@@ -72,7 +74,7 @@
 
         <div class="col-md-3 col-sm-6">
             <a href="{{ url_for('patient.history') }}" class="text-decoration-none">
-                <div class="card-modern p-3 border-start border-4 border-success hover-lift cursor-pointer">
+                <div class="card-modern p-3 border-start border-4 border-success hover-lift cursor-pointer" onclick="window.location.href='{{ url_for('patient.history') }}'">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="text-secondary fs-7 fw-semibold">Last Assessment Date</span>
                         <i class="fa-solid fa-calendar-check text-success fs-4"></i>
@@ -88,12 +90,11 @@
         </div>
     </div>
 
-
     <!-- Quick Actions Banner -->
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <a href="{{ url_for('patient.symptoms') }}" class="text-decoration-none">
-                <div class="card-modern p-3 text-center bg-primary text-white hover-lift">
+                <div class="card-modern p-3 text-center bg-primary text-white hover-lift cursor-pointer" onclick="window.location.href='{{ url_for('patient.symptoms') }}'">
                     <i class="fa-solid fa-microscope fs-2 mb-2"></i>
                     <h6 class="fw-bold mb-0">Analyze Symptoms</h6>
                 </div>
@@ -101,7 +102,7 @@
         </div>
         <div class="col-md-3">
             <a href="{{ url_for('patient.history') }}" class="text-decoration-none">
-                <div class="card-modern p-3 text-center bg-white text-dark hover-lift">
+                <div class="card-modern p-3 text-center bg-white text-dark hover-lift cursor-pointer" onclick="window.location.href='{{ url_for('patient.history') }}'">
                     <i class="fa-solid fa-clock-rotate-left fs-2 text-info mb-2"></i>
                     <h6 class="fw-bold mb-0">View History</h6>
                 </div>
@@ -109,7 +110,7 @@
         </div>
         <div class="col-md-3">
             <a href="{{ url_for('patient.analytics') }}" class="text-decoration-none">
-                <div class="card-modern p-3 text-center bg-white text-dark hover-lift">
+                <div class="card-modern p-3 text-center bg-white text-dark hover-lift cursor-pointer" onclick="window.location.href='{{ url_for('patient.analytics') }}'">
                     <i class="fa-solid fa-chart-pie fs-2 text-success mb-2"></i>
                     <h6 class="fw-bold mb-0">Health Analytics</h6>
                 </div>
@@ -117,7 +118,7 @@
         </div>
         <div class="col-md-3">
             <a href="{{ url_for('patient.profile') }}" class="text-decoration-none">
-                <div class="card-modern p-3 text-center bg-white text-dark hover-lift">
+                <div class="card-modern p-3 text-center bg-white text-dark hover-lift cursor-pointer" onclick="window.location.href='{{ url_for('patient.profile') }}'">
                     <i class="fa-solid fa-user-gear fs-2 text-warning mb-2"></i>
                     <h6 class="fw-bold mb-0">Medical Profile</h6>
                 </div>
@@ -126,6 +127,7 @@
     </div>
 
     <!-- Recent Predictions Log -->
+
     <div class="card-modern p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="fw-bold mb-0"><i class="fa-solid fa-list-check me-2 text-primary"></i> Recent Predictions</h5>
