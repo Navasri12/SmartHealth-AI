@@ -103,8 +103,14 @@ def login():
             return redirect(url_for('auth.admin_login'))
 
         login_user(user, remember=remember)
+        from flask import session
+        session['user_email'] = user.email
+        session['user_name'] = user.name
+        session['user_role'] = user.role
+        session['user_phone'] = user.phone or ''
         flash(f'Welcome back, {user.name}!', 'success')
         return redirect(url_for('patient.dashboard'))
+
 
     return render_template('auth/login.html')
 
@@ -128,8 +134,14 @@ def admin_login():
             return render_template('auth/admin_login.html')
 
         login_user(user)
+        from flask import session
+        session['user_email'] = user.email
+        session['user_name'] = user.name
+        session['user_role'] = user.role
+        session['user_phone'] = user.phone or ''
         flash('Successfully authenticated as Administrator.', 'success')
         return redirect(url_for('admin.dashboard'))
+
 
     return render_template('auth/admin_login.html')
 

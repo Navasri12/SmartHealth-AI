@@ -24,11 +24,44 @@ def create_app(config_class=Config):
     login_manager.login_message = 'Please log in to access this page.'
     login_manager.login_message_category = 'warning'
 
-    from app.models.user import User
+    from app.models.user import User, PatientProfile
+    from flask import session
     
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        try:
+            uid = int(user_id)
+        except Exception:
+            return None
+
+        user = User.query.get(uid)
+        if not user and session.get('user_email'):
+            email = session.get('user_email').lower()
+            user = User.query.filter_by(email=email).first()
+            if not user:
+                try:
+                    user = User(
+                        id=uid,
+                        name=session.get('user_name', 'Patient User'),
+                        email=email,
+                        role=session.get('user_role', 'patient'),
+                        phone=session.get('user_phone', '')
+                    )
+                    user.set_password('Restored@123')
+                    db.session.add(user)
+                    db.session.commit()
+                    
+                    if user.role == 'patient':
+                        prof = PatientProfile.query.filter_by(user_id=user.id).first()
+                        if not prof:
+                            prof = PatientProfile(user_id=user.id)
+                            db.session.add(prof)
+                            db.session.commit()
+                except Exception as err:
+                    db.session.rollback()
+                    user = User.query.filter_by(email=email).first()
+        return user
+
 
     # Register Blueprints
     from app.routes.main import main_bp
